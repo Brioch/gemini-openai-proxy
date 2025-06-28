@@ -41,14 +41,36 @@ Alternatively, you can use the provided Dockerfile to build a Docker image.
 ```sh
 docker build --tag "gemini-openai-proxy" .
 
-# Run with environment variables
+# Run with API Key authentication
 docker run -p 11434:80 \
   -e AUTH_TYPE=gemini-api-key \
   -e GEMINI_API_KEY=your_api_key_here \
   gemini-openai-proxy
 
-# Or use an .env file
+# Run with OAuth Personal (requires credentials file mount)
+docker run -p 11434:80 \
+  -e AUTH_TYPE=oauth-personal \
+  -e GOOGLE_CLOUD_PROJECT=your_project_id \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
+  -v /path/to/your/oauth_creds.json:/app/credentials.json:ro \
+  gemini-openai-proxy
+
+# Run with Vertex AI
+docker run -p 11434:80 \
+  -e AUTH_TYPE=vertex-ai \
+  -e GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID \
+  -e GOOGLE_CLOUD_LOCATION=us-central1 \
+  -e GOOGLE_GENAI_USE_VERTEXAI=true \
+  gemini-openai-proxy
+
+# Or use an .env file (for API Key or Vertex AI)
 docker run -p 11434:80 --env-file .env gemini-openai-proxy
+
+# Or use .env file with credentials mount (for OAuth Personal)
+docker run -p 11434:80 \
+  --env-file .env \
+  -v /path/to/your/oauth_creds.json:/app/credentials.json:ro \
+  gemini-openai-proxy
 ```
 
 ## Configuration
@@ -101,6 +123,24 @@ GOOGLE_GENAI_USE_VERTEXAI=true
 ```
 
 **Note:** The `.env` file is automatically loaded when the application starts. Make sure to add `.env` to your `.gitignore` file to avoid committing sensitive information.
+
+#### Docker Configuration Notes
+
+When using Docker with OAuth Personal authentication:
+- The credentials file must be mounted into the container
+- Set `GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json` in your environment
+- Use the `-v` flag to mount your local credentials file to `/app/credentials.json`
+
+Example:
+```bash
+# Mount credentials file for OAuth Personal in Docker
+docker run -p 11434:80 \
+  -e AUTH_TYPE=oauth-personal \
+  -e GOOGLE_CLOUD_PROJECT=your_project_id \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
+  -v ~/.gemini/oauth_creds.json:/app/credentials.json:ro \
+  gemini-openai-proxy
+```
 
 #### Authentication Types
 
