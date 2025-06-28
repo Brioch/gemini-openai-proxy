@@ -11,7 +11,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@google/gemini-cli": "^0.1.5"
+    "@google/gemini-cli": "^0.1.5",
+    "dotenv": "^17.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.4",

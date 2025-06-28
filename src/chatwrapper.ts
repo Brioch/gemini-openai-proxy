@@ -4,6 +4,7 @@ import {
   createContentGeneratorConfig,
   createContentGenerator,
 } from '@google/gemini-cli-core/dist/src/core/contentGenerator.js';
+import 'dotenv/config';
 
 const authType = process.env.AUTH_TYPE ?? 'gemini-api-key';
 const authTypeEnum = authType as AuthType;
