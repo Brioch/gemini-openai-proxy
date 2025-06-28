@@ -85,8 +85,12 @@ http
         }
       } catch (err: any) {
         console.error('Proxy error ➜', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: err.message } }));
+        if (!res.headersSent) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: err.message } }));
+        } else if (!res.writableEnded) {
+          res.end();
+        }
       }
       return;
     }
